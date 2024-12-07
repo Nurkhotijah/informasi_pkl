@@ -84,12 +84,19 @@ class IndustriController extends Controller
         ]);
     }
 
-    public function kelolaPengajuansiswa()
+    public function index()
     {
-        // Logika untuk mengelola kehadiran
-        return view('pages-industri.kelola-pengajuansiswa');
+        $jurnal = User::whereHas('profile', function ($query) {
+            $query->where('id_sekolah', '!=', null);
+        })
+        ->where('role', 'siswa')
+        ->with('laporan')  // Eager loading untuk relasi 'laporan' yang hanya 1
+        ->get();
+    
+        // Mengirim data jurnal dan laporan ke tampilan
+        return view('pages-industri.jurnal.index', compact('jurnal'));
     }
-
+    
 
     public function kelolaNilai()
     {

@@ -14,7 +14,6 @@ class Jurnal extends Model
 
     // Kolom-kolom yang dapat diisi secara mass-assignment
     protected $fillable = [
-        'laporan_id',
         'user_id',
         'kegiatan',
         'tanggal',

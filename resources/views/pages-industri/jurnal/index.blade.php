@@ -36,14 +36,17 @@
                         <td class="py-2 px-4 border-b text-left">{{ $item->name }}</td> <!-- Menampilkan Nama Siswa -->
                         <td class="py-2 px-4 border-b text-left">{{ $item->profile->sekolah->nama }}</td> <!-- Menampilkan Nama Sekolah -->
                         <td class="py-2 px-4 border-b text-center">
-                            <button onclick="openLaporanModal('awdwd')"
-                                    class="bg-green-500 text-white text-xs px-3 py-1 rounded shadow hover:bg-green-600 transition duration-300 ease-in-out">
-                                <i class="fas fa-file-pdf mr-1"></i> Unduh
-                            </button>
+                            @if ($item->laporan)
+                            <a href="#" class="text-blue-500 hover:underline" onclick="showReportPreview('{{ asset('storage/'.$item->laporan->file_name) }}')">
+                                {{ $item->laporan->file_name }}
+                            </a> <!-- Klik untuk melihat laporan -->
+                            @else
+                            <p>Tidak ada laporan</p>
+                            @endif
                         </td>
                         <td class="py-2 px-4 border-b text-center">
                             <div class="flex justify-center space-x-2">
-                                <a href="{{ route('jurnal-industri.detail', $item->id) }}" class="bg-blue-500 text-white text-xs px-3 py-1 rounded shadow hover:bg-blue-600 transition duration-300 ease-in-out" onclick="showActivityImage('assets/coding.png')">
+                                <a href="{{ route('jurnal-industri.detail', $item->id) }}" class="bg-blue-500 text-white text-xs px-3 py-1 rounded shadow hover:bg-blue-600 transition duration-300 ease-in-out">
                                     <i class="fas fa-eye mr-1"></i> Lihat
                                 </a>
                             </div>
@@ -54,11 +57,40 @@
             </table>
         </div>
 
-        <!-- Pagination Section -->
-        {{-- <div class="flex justify-end items-center mt-4">
-            <span class="mr-4" id="pageNumber">Halaman {{ $jurnal->currentPage() }}</span>
-            {{ $jurnal->links() }}
-        </div> --}}
+        <!-- Modal untuk Preview Laporan -->
+        <div id="reportModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center hidden">
+            <div class="bg-white p-4 rounded-lg shadow-lg max-w-4xl w-full">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold">Preview Laporan</h3>
+                    <button onclick="closeReportPreview()" class="text-gray-500 hover:text-gray-700">×</button>
+                </div>
+                <div id="reportContent" class="mt-4">
+                    <!-- Isi laporan akan ditampilkan di sini -->
+                </div>
+            </div>
+        </div>
+
     </div>
 </main>
+
+<script>
+    // Fungsi untuk menampilkan modal dan preview file laporan
+    function showReportPreview(fileUrl) {
+        const modal = document.getElementById('reportModal');
+        const reportContent = document.getElementById('reportContent');
+        
+        // Menampilkan laporan sesuai dengan tipe file
+        reportContent.innerHTML = `<embed src="${fileUrl}" width="100%" height="500px" type="application/pdf">`;
+
+        // Menampilkan modal
+        modal.classList.remove('hidden');
+    }
+
+    // Fungsi untuk menutup modal
+    function closeReportPreview() {
+        const modal = document.getElementById('reportModal');
+        modal.classList.add('hidden');
+    }
+</script>
+
 @endsection

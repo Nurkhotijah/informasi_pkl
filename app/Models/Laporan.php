@@ -16,12 +16,6 @@ class Laporan extends Model
         'file_path',
     ];
 
-    public function jurnal()
-    {
-        return $this->hasMany(Jurnal::class);
-    }
-
-
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

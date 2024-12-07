@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('jurnal', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('laporan_id'); 
             $table->text('kegiatan');
             $table->date('tanggal');
             $table->time('waktu_mulai');
@@ -22,8 +21,6 @@ return new class extends Migration
             // Foreign key ke tabel users
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         
-            // Foreign key ke tabel laporan
-            $table->foreign('laporan_id')->references('id')->on('laporan')->onDelete('cascade');
         });
     }
 

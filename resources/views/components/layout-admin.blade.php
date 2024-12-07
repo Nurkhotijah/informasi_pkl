@@ -43,7 +43,7 @@
                         class="p-3 {{ request()->is('pengajuan') ? 'bg-green-600' : 'hover:bg-gray-700' }} flex items-center space-x-2">
                         <img width="30" height="30"
                             src="https://img.icons8.com/ios/50/FFFFFF/submit-document.png" alt="submit-document" />
-                        <a href="{{ route('pengajuan.index') }}" class="text-sm">Pengajuan Siswa</a>
+                        <a href="{{ route('pengajuan.index') }}" class="text-sm">Pengajuan PKL</a>
                     </li>
                     <li
                         class="p-3 {{ request()->is('data-siswa') ? 'bg-green-600' : 'hover:bg-gray-700' }} flex items-center space-x-2">

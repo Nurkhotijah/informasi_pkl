@@ -21,8 +21,8 @@ class KehadiranController extends Controller
     public function store(Request $request)
 {
     $request->validate([
-        'photo' => 'required|string',
-    ]);
+        'foto_izin' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
 
     $user = Auth::user();
 

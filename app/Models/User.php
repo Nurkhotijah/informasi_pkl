@@ -36,10 +36,10 @@ class User extends Authenticatable
         return $this->hasMany(Jurnal::class, 'user_id');
     }
 
-    public function laporanPkl()
-{
-    return $this->hasMany(LaporanPkl::class);
-}
+    public function laporan()
+    {
+        return $this->hasOne(Laporan::class);
+    }
     /**
      * The attributes that are mass assignable.
      *

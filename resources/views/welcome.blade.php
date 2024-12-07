@@ -18,8 +18,9 @@
         <div class="container mx-auto flex justify-between items-center py-4 px-6">
             <div class="text-3xl font-extrabold text-blue-600 tracking-wider hover:text-blue-700 transition duration-300">SI-PKL</div>
             <nav class="space-x-6">
-                <a href="#features" class="text-gray-800 hover:text-blue-600 font-medium transition duration-300">Fitur</a>
+                <a href="#features" class="text-gray-800 hover:text-blue-600 font-medium transition duration-300">Keunggulan</a>
                 <a href="#about" class="text-gray-800 hover:text-blue-600 font-medium transition duration-300">Tentang</a>
+                <a href="{{ route('register') }}" class="text-gray-800 hover:text-blue-600 font-medium transition duration-300">Pengajuan</a>
                 <a href="{{ route('login') }}" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-full hover:from-blue-700 hover:to-indigo-700 transition duration-300">Masuk</a>
             </nav>
         </div>

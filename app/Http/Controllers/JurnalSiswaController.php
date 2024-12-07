@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jurnal;
-use App\Models\Laporan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -16,8 +15,7 @@ class JurnalSiswaController extends Controller
         $users = Auth::user();
 
         $jurnal = Jurnal::where('user_id', $users->id)->get();
-        $laporan = Laporan::where('user_id', $users->id)->get(); 
-        return view('pages-user.jurnal.index', compact('jurnal', 'laporan'));
+        return view('pages-user.jurnal.index', compact('jurnal'));
     }
 
     public function create()
@@ -27,7 +25,7 @@ class JurnalSiswaController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all()); 
+        // dd($request->all()); 
         // Validasi input dari form
         $request->validate([
             'kegiatan' => 'required|string|max:100',
@@ -40,9 +38,6 @@ class JurnalSiswaController extends Controller
         // Mendapatkan data pengguna yang login
         $users = Auth::user();
 
-        // Menyimpan file laporan PKL jika ada
-        $laporanPath = $request->file('laporan_pkl') ? $request->file('laporan_pkl')->store('laporan', 'public') : null;
-        // Menyimpan file foto kegiatan jika ada
         $fotoPath = $request->file('foto_kegiatan') ? $request->file('foto_kegiatan')->store('kegiatan', 'public') : null;
 
         // Menyimpan data jurnal kegiatan ke dalam database
@@ -52,7 +47,6 @@ class JurnalSiswaController extends Controller
             'tanggal' => $request->tanggal,
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_selesai' => $request->waktu_selesai,
-            'laporan_id' => $laporan->id, // Simpan laporan_id            
             'foto_kegiatan' => $fotoPath,
             'user_id' => $users->id,  // ID pengguna yang login (siswa)
         ]);
@@ -70,7 +64,6 @@ class JurnalSiswaController extends Controller
     {
         $jurnal = Jurnal::findOrFail($id);
         $users = Auth::user();
-        $laporan = Laporan::where('user_id', $users->id)->get(); // Ambil laporan pengguna
         return view('pages-user.jurnal.edit', compact('jurnal', 'laporan'));
     }
 
@@ -86,13 +79,7 @@ class JurnalSiswaController extends Controller
 
         $jurnal = Jurnal::findOrFail($id);
 
-        // Update file jika ada
-        if ($request->hasFile('laporan_pkl')) {
-            if ($jurnal->laporan_pkl) {
-                Storage::disk('public')->delete($jurnal->laporan_pkl);
-            }
-            $jurnal->laporan_pkl = $request->file('laporan_pkl')->store('laporan', 'public');
-        }
+        
 
         if ($request->hasFile('foto_kegiatan')) {
             if ($jurnal->foto_kegiatan) {
@@ -115,11 +102,6 @@ class JurnalSiswaController extends Controller
     {
         $jurnal = Jurnal::findOrFail($id);
 
-        // Hapus file laporan jika ada
-        if ($jurnal->laporan_pkl) {
-            Storage::disk('public')->delete($jurnal->laporan_pkl);
-        }
-
         // Hapus file foto jika ada
         if ($jurnal->foto_kegiatan) {
             Storage::disk('public')->delete($jurnal->foto_kegiatan);
@@ -130,26 +112,5 @@ class JurnalSiswaController extends Controller
         return redirect()->route('jurnal-siswa.index')->with('success', 'Jurnal kegiatan berhasil dihapus!');
     }
 
-    public function uploadLaporan(Request $request, $id)
-    {
-        $request->validate([
-            'laporan_pkl' => 'required|file|mimes:pdf|max:5000',
-        ]);
-
-        $jurnal = Jurnal::findOrFail($id);
-
-        // Hapus file lama jika ada
-        if ($jurnal->laporan_pkl) {
-            Storage::disk('public')->delete($jurnal->laporan_pkl);
-        }
-
-        // Simpan file baru
-        $laporanPath = $request->file('laporan_pkl')->store('laporan', 'public');
-
-        $jurnal->update([
-            'laporan_pkl' => $laporanPath,
-        ]);
-
-        return redirect()->back()->with('success', 'Laporan berhasil diunggah!');
-    }
+    
 }

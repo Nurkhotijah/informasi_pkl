@@ -7,7 +7,7 @@
     <div class="max-w-7xl mx-auto bg-white p-4 sm:p-6 rounded-lg shadow-md">
         <!-- Header Section -->
         <div class="mb-4">
-            <h1 class="text-xl sm:text-2xl font-bold mb-2 sm:mb-4">Laporan Jurnal Siswa</h1>
+            <h1 class="text-xl sm:text-2xl font-bold mb-2 sm:mb-4">Jurnal Siswa</h1>
             <div class="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 sm:space-x-4">
                 <div class="relative w-full sm:w-auto">
                     <input class="border rounded-l p-2 pl-10 w-full sm:w-64" id="search" placeholder="Cari Nama atau Sekolah" type="text" oninput="filterTable()">
@@ -23,7 +23,6 @@
                     <tr>
                         <th class="py-2 px-4 border-b text-center">No</th>
                         <th class="py-2 px-4 border-b text-left">Nama Lengkap</th>
-                        <th class="py-2 px-4 border-b text-center">Laporan PKL</th>
                         <th class="py-2 px-4 border-b text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -33,12 +32,6 @@
                         <tr>
                             <td class="py-2 px-4 border-b text-center">{{ $loop->iteration }}</td>
                             <td class="py-2 px-4 border-b text-left">{{ $item->name }}</td>
-                            <td class="py-2 px-4 border-b text-center">
-                                <button onclick="openLaporanModal('path-to-laporan-pkl.pdf')"
-                                        class="bg-green-500 text-white text-xs px-3 py-1 rounded shadow hover:bg-green-600 transition duration-300 ease-in-out">
-                                    <i class="fas fa-file-pdf mr-1"></i> Unduh
-                                </button>
-                            </td>
                             <td class="py-2 px-4 border-b text-center">
                                 <div class="flex justify-center space-x-2">
                                     <a href="{{ route('jurnal-admin.detail', $item->id) }}" 
