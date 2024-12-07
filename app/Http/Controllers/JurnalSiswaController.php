@@ -27,13 +27,13 @@ class JurnalSiswaController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all()); 
         // Validasi input dari form
         $request->validate([
             'kegiatan' => 'required|string|max:100',
             'tanggal' => 'required|date',
             'waktu_mulai' => 'required',
             'waktu_selesai' => 'required',
-            'laporan_id' => 'required|exists:laporan,id',            
             'foto_kegiatan' => 'nullable|image|mimes:jpeg,png,jpg|max:5000',
         ]);
 
@@ -52,7 +52,7 @@ class JurnalSiswaController extends Controller
             'tanggal' => $request->tanggal,
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_selesai' => $request->waktu_selesai,
-            'laporan_id' => $request->laporan_id, // Simpan laporan_id            
+            'laporan_id' => $laporan->id, // Simpan laporan_id            
             'foto_kegiatan' => $fotoPath,
             'user_id' => $users->id,  // ID pengguna yang login (siswa)
         ]);
@@ -81,7 +81,6 @@ class JurnalSiswaController extends Controller
             'tanggal' => 'required|date',
             'waktu_mulai' => 'required',
             'waktu_selesai' => 'required',
-            'laporan_id' => 'required|exists:laporan,id',
             'foto_kegiatan' => 'nullable|image|mimes:jpeg,png,jpg|max:5000',
         ]);
 
@@ -107,7 +106,6 @@ class JurnalSiswaController extends Controller
             'tanggal' => $request->tanggal,
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_selesai' => $request->waktu_selesai,
-            'laporan_id' => $request->laporan_id,
         ]);
 
         return redirect()->route('jurnal-siswa.index')->with('success', 'Jurnal berhasil diperbarui!');

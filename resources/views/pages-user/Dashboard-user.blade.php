@@ -91,20 +91,41 @@ async function startCamera() {
     videoElement.srcObject = stream;
 }
 
-// Fungsi untuk mengambil foto
-function capturePhoto() {
+// Fungsi untuk mengambil foto dan mengirim ke server
+async function capturePhoto() {
     const canvas = document.createElement("canvas");
     canvas.width = videoElement.videoWidth;
     canvas.height = videoElement.videoHeight;
     const ctx = canvas.getContext("2d");
     ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+    // Ambil data gambar dalam format Base64
     const dataUrl = canvas.toDataURL("image/png");
 
-    capturedImage.src = dataUrl;
-    capturedImage.classList.remove("hidden");
-    videoElement.classList.add("hidden");
-    captureButton.classList.add("hidden");
-    doneButton.classList.remove("hidden");
+    try {
+        // Kirim data ke server
+        const response = await fetch("{{ route('kehadiran.store') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+            body: JSON.stringify({
+                photo: dataUrl, // Kirim data foto dalam format Base64
+            }),
+        });
+
+        const result = await response.json();
+        if (result.message === "Kehadiran berhasil disimpan") {
+            alert("Absensi berhasil dicatat!");
+            updateAttendance(); // Update jumlah absen
+        } else {
+            alert("Terjadi kesalahan, coba lagi.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Gagal mengirim data ke server.");
+    }
 }
 
 // Menangani klik tombol Ambil Foto
@@ -186,26 +207,6 @@ function showImage(type, absensiId) {
     } else if (type === 'checkOut') {
         document.getElementById('checkOutImage-' + absensiId).classList.remove('hidden');
         document.getElementById('checkInImage-' + absensiId).classList.add('hidden');
-    }
-}
-
-// Fungsi untuk mengirimkan absensi ke backend
-async function sendAttendanceData(photoData) {
-    const response = await fetch("{{ route('absen.store') }}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-            photo: photoData
-        })
-    });
-    const data = await response.json();
-    if (data.message === 'Absen berhasil') {
-        // Handle success (e.g., update UI)
-    } else {
-        // Handle error
     }
 }
 

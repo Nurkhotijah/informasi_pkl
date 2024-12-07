@@ -198,9 +198,8 @@ Route::put('/update-profile', [ProfileController::class, 'update'])->name('profi
 // USER
 Route::post('/laporan-pkl', [LaporanController::class, 'store'])->name('laporan.store');
 
-
-Route::post('/absen', [AbsensiController::class, 'store'])->name('absen.store');
-
+Route::get('/riwayat-absensi', [KehadiranController::class, 'index'])->name('riwayat-absensi');
+Route::post('/kehadiran/store', [KehadiranController::class, 'store'])->name('kehadiran.store');
 Route::get('/dashboard-user', [UserController::class, 'dashboard'])->name('user.dashboard');
 
 

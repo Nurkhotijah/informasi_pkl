@@ -46,21 +46,21 @@
                     @foreach($kehadiran as $absensi)
                     <tr class="bg-white hover:bg-gray-50 transition duration-200 ease-in-out">
                         <td class="py-4 px-4 border-b border-gray-300 text-gray-700">{{ $loop->iteration }}</td>
-                        <td class="py-4 px-4 border-b border-gray-300 text-gray-800">{{ $absensi->name }}</td>
+                        <td class="py-4 px-4 border-b border-gray-300 text-gray-800">{{ Auth::user()->name }}</td>
                         <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ \Carbon\Carbon::parse($absensi->tanggal)->format('d M Y') }}</td>
-                        <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ $absensi->status_kehadiran }}</td>
-                        <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ \Carbon\Carbon::parse($absensi->waktu_masuk)->format('H:i') }}</td>
-                        <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ \Carbon\Carbon::parse($absensi->waktu_keluar)->format('H:i') }}</td>
+                        <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ $absensi->status }}</td>
+                        <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ $absensi->waktu_masuk }}</td>
+                        <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ $absensi->waktu_keluar }}</td>
                         <td class="py-4 px-4 border-b border-gray-300 text-center">
                             @if($absensi->foto_masuk)
-                            <img class="w-16 h-16 object-cover rounded-full mx-auto" src="{{ asset('storage/foto_kehadiran/' . $absensi->foto_masuk) }}" alt="Foto Masuk">
+                            <img class="w-16 h-16 object-cover rounded-full mx-auto" src="{{ asset('storage/' . $absensi->foto_masuk) }}" alt="Foto Masuk">
                             @else
                             Tidak ada foto
                             @endif
                         </td>
                         <td class="py-4 px-4 border-b border-gray-300 text-center">
                             @if($absensi->foto_keluar)
-                            <img class="w-16 h-16 object-cover rounded-full mx-auto" src="{{ asset('storage/foto_kehadiran/' . $absensi->foto_keluar) }}" alt="Foto Keluar">
+                            <img class="w-16 h-16 object-cover rounded-full mx-auto" src="{{ asset('storage/' . $absensi->foto_keluar) }}" alt="Foto Keluar">
                             @else
                             Tidak ada foto
                             @endif
@@ -68,6 +68,7 @@
                     </tr>
                     @endforeach
                 </tbody>
+                
             </table>
         </div>
 

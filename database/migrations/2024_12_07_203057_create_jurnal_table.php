@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('jurnal', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('laporan_id'); // Relasi ke tabel laporan
+            $table->unsignedBigInteger('laporan_id'); 
             $table->text('kegiatan');
             $table->date('tanggal');
             $table->time('waktu_mulai');
