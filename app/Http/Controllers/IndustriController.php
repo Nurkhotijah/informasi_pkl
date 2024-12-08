@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jurnal;
-use App\Models\JurnalKegiatan;
 use App\Models\Pengajuan;
-use App\Models\PengajuanSiswa;
+use App\Models\Kehadiran;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,20 +12,48 @@ use Illuminate\Support\Facades\Hash;
 
 class IndustriController extends Controller
 {
+     public function dashboard()
+    {
+        return view('pages-industri.dashboard-industri');
+    }
+    
     public function UpdateIndustri()
     {
         // Logika untuk menampilkan 
         return view('pages-industri.update-industri');
     }
-    public function dashboard()
+   
+    public function Kehadiran()
     {
-        return view('pages-industri.dashboard-industri');
+        // Ambil data kehadiran dari database
+        $kehadiran = Kehadiran::all(); // Sesuaikan dengan query yang sesuai dengan kebutuhan
+        return view('pages-industri.kelola-kehadiran', compact('kehadiran'));
     }
-    public function kelolaKehadiran()
+    public function edit($id)
     {
-        // Logika untuk mengelola kehadiran
-        return view('pages-industri.kelola-kehadiran');
+        $item = Kehadiran::with('user')->find($id);
+        $item = Kehadiran::findOrFail($id);
+        return view('pages-industri.edit-kehadiran', compact('item'));
     }
+
+    public function updatekehadiran(Request $request, $id)
+{
+    
+    // Validasi input
+    $request->validate([
+        'status' => 'required|string',
+    ]);
+
+    // Mencari data kehadiran berdasarkan ID
+    $item = Kehadiran::findOrFail($id);
+    
+    // Update status kehadiran
+    $item->status = $request->status;
+    $item->save(); // Simpan perubahan
+
+    // Redirect kembali dengan pesan sukses
+    return redirect()->route('kelola-kehadiran')->with('success', 'Kehadiran berhasil diperbarui.');
+}
 
     public function dataSekolah()
     {
@@ -97,6 +124,24 @@ class IndustriController extends Controller
         return view('pages-industri.jurnal.index', compact('jurnal'));
     }
     
+    
+
+
+    
+    
+
+public function update(Request $request, $id)
+{
+    // Update status kehadiran berdasarkan ID
+    $kehadiran = Kehadiran::findOrFail($id);
+    
+    // Validasi status, jika diperlukan
+    $kehadiran->status = $request->status;
+    $kehadiran->save();
+
+    return redirect()->route('kelola-kehadiran')->with('success', 'Status kehadiran berhasil diperbarui');
+}
+
 
     public function kelolaNilai()
     {

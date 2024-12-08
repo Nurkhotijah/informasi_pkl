@@ -40,6 +40,8 @@
                         <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 border-b border-gray-300">Waktu Keluar</th>
                         <th class="py-3 px-4 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">Foto Masuk</th>
                         <th class="py-3 px-4 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">Foto Keluar</th>
+                        <th class="py-3 px-4 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">Foto izin</th>
+
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light">
@@ -49,20 +51,42 @@
                         <td class="py-4 px-4 border-b border-gray-300 text-gray-800">{{ Auth::user()->name }}</td>
                         <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ \Carbon\Carbon::parse($absensi->tanggal)->format('d M Y') }}</td>
                         <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ $absensi->status }}</td>
-                        <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ $absensi->waktu_masuk }}</td>
-                        <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ $absensi->waktu_keluar }}</td>
+                        <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ $absensi->waktu_masuk ? \Carbon\Carbon::parse($absensi->waktu_masuk)->format('H:i:s') : '-' }}</td>
+                        <td class="py-4 px-4 border-b border-gray-300 text-gray-600">{{ $absensi->waktu_keluar ? \Carbon\Carbon::parse($absensi->waktu_keluar)->format('H:i:s') : '-' }}</td>
                         <td class="py-4 px-4 border-b border-gray-300 text-center">
                             @if($absensi->foto_masuk)
-                            <img class="w-16 h-16 object-cover rounded-full mx-auto" src="{{ asset('storage/' . $absensi->foto_masuk) }}" alt="Foto Masuk">
+                            <a href="{{ asset('storage/' . $absensi->foto_masuk) }}" target="_blank">
+                                <img class="w-16 h-16 object-cover rounded-full mx-auto hover:opacity-75 transition duration-300" 
+                                     src="{{ asset('storage/' . $absensi->foto_masuk) }}" 
+                                     alt="Foto Masuk"
+                                     title="Klik untuk memperbesar">
+                            </a>
                             @else
-                            Tidak ada foto
+                            <span class="text-gray-400">Tidak ada foto</span>
                             @endif
                         </td>
                         <td class="py-4 px-4 border-b border-gray-300 text-center">
                             @if($absensi->foto_keluar)
-                            <img class="w-16 h-16 object-cover rounded-full mx-auto" src="{{ asset('storage/' . $absensi->foto_keluar) }}" alt="Foto Keluar">
+                            <a href="{{ asset('storage/' . $absensi->foto_keluar) }}" target="_blank">
+                                <img class="w-16 h-16 object-cover rounded-full mx-auto hover:opacity-75 transition duration-300" 
+                                     src="{{ asset('storage/' . $absensi->foto_keluar) }}" 
+                                     alt="Foto Keluar"
+                                     title="Klik untuk memperbesar">
+                            </a>
                             @else
-                            Tidak ada foto
+                            <span class="text-gray-400">Tidak ada foto</span>
+                            @endif
+                        </td>
+                        <td class="py-4 px-4 border-b border-gray-300 text-center">
+                            @if($absensi->foto_izin)
+                            <a href="{{ asset('storage/' . $absensi->foto_izin) }}" target="_blank">
+                                <img class="w-16 h-16 object-cover rounded-full mx-auto hover:opacity-75 transition duration-300" 
+                                     src="{{ asset('storage/' . $absensi->foto_izin) }}" 
+                                     alt="Foto Izin"
+                                     title="Klik untuk memperbesar">
+                            </a>
+                            @else
+                            <span class="text-gray-400">Tidak ada foto izin</span>
                             @endif
                         </td>
                     </tr>

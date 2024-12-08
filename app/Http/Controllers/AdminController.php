@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Kehadiran;
 // use App\Models\Pengajuan;
 
 
@@ -8,6 +9,7 @@ use App\Models\User;
 
 class AdminController extends Controller
 {
+
     public function dashboard()
     {
         return view('pages-admin.dashboard-admin');
@@ -16,7 +18,15 @@ class AdminController extends Controller
         // Logika untuk mengelola kehadiran
         return view('pages-admin.kehadiran-siswapkl'); 
     }
+    public function index()
+    {
+        $kehadiran = Kehadiran::with('user')->get();
+        // Mengambil semua data dari tabel kehadiran
+        $kehadiran = Kehadiran::all();
 
+        // Mengirim data ke tampilan
+        return view('pages-admin.kehadiran-siswapkl', compact('kehadiran'));
+    }
     public function pengajuan() 
     {
         // Logika untuk mengelola pengajuan

@@ -20,16 +20,6 @@
                             <i class="fas fa-plus mr-2"></i> Tambah
                         </a>
                     </div>
-
-                    <div class="flex items-center w-full sm:w-auto sm:ml-auto">
-                        <label class="mr-2" for="school">Pilih Sekolah:</label>
-                        <select class="border rounded p-2 w-full sm:w-auto" id="school" onchange="filterBySchool()">
-                            <option value="">Pilih Sekolah</option>
-                            <option value="smkn_1_ciomas">SMKN 1 Ciomas</option>
-                            <option value="smk_komputer_indonesia">SMK Komputer Indonesia</option>
-                            <option value="smk_adi_sanggoro">SMK Adi Sanggoro</option>
-                        </select>
-                    </div>
                 </div>
             </div>
 
@@ -54,37 +44,13 @@
                                     <a href="{{ route('edit-rekap', 1) }}" class="bg-yellow-400 text-white text-xs px-3 py-1 shadow hover:bg-yellow-500 transition duration-300 ease-in-out">
                                         <i class="fas fa-edit mr-1"></i> Edit
                                     </a>
-                                    <a href="{{ route('lihat-rekap', 2) }}" target="_blank" class="bg-blue-400 text-white text-xs px-3 py-1 shadow hover:bg-blue-500 transition duration-300 ease-in-out">
+                                    <a href="{{ route('cetak-rekap', 2) }}" target="_blank" class="bg-blue-400 text-white text-xs px-3 py-1 shadow hover:bg-blue-500 transition duration-300 ease-in-out">
                                         <i class="fas fa-eye mr-1"></i> Lihat
                                     </a>                                    
-                                    <a href="{{ route('cetak-rekap', 1) }}" target="_blank" class="bg-green-400 text-white text-xs px-3 py-1 shadow hover:bg-green-500 transition duration-300 ease-in-out">
-                                        <i class="fas fa-print mr-1"></i> Cetak
-                                    </a>
                                     <button onclick="openDeleteModal(this)" class="bg-red-400 text-white text-xs px-3 py-1 shadow hover:bg-red-500 transition duration-300 ease-in-out">
                                         <i class="fas fa-trash-alt mr-1"></i> Hapus
                                     </button>
                                 </div>                   
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b text-center">2</td>
-                            <td class="py-2 px-4 border-b text-left">Marsya</td>
-                            <td class="py-2 px-4 border-b text-left">SMK Komputer Indonesia</td>
-                            <td class="py-2 px-4 border-b text-center">
-                                <div class="flex justify-center space-x-2">
-                                    <a href="{{ route('edit-rekap', 1) }}" class="bg-yellow-400 text-white text-xs px-3 py-1 shadow hover:bg-yellow-500 transition duration-300 ease-in-out">
-                                        <i class="fas fa-edit mr-1"></i> Edit
-                                    </a>
-                                    <a href="{{ route('lihat-rekap', 2) }}" target="_blank" class="bg-blue-400 text-white text-xs px-3 py-1 shadow hover:bg-blue-500 transition duration-300 ease-in-out">
-                                        <i class="fas fa-eye mr-1"></i> Lihat
-                                    </a>                                    
-                                    <a href="{{ route('cetak-rekap', 1) }}" target="_blank" class="bg-green-400 text-white text-xs px-3 py-1 shadow hover:bg-green-500 transition duration-300 ease-in-out">
-                                        <i class="fas fa-print mr-1"></i> Cetak
-                                    </a>
-                                    <button onclick="openDeleteModal(this)" class="bg-red-400 text-white text-xs px-3 py-1 shadow hover:bg-red-500 transition duration-300 ease-in-out">
-                                        <i class="fas fa-trash-alt mr-1"></i> Hapus
-                                    </button>
-                                </div> 
                             </td>
                         </tr>
                     </tbody>
@@ -120,7 +86,7 @@
 </div>
 
    
-    <script>
+    {{-- <script>
         let deleteModal = document.getElementById('deleteModal');
 let rowToDelete = null;
 
@@ -235,5 +201,6 @@ function deleteRow() {
                 }
             });
         }
-    </script>
+    </script> --}}
+
 @endsection

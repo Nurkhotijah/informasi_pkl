@@ -4,68 +4,96 @@
 
 @section('content')
 
-<main class="bg-gray-100 flex items-center justify-center min-h-screen">
+<main class="bg-gray-100 flex items-center justify-center">
     <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-6xl">
-        <h1 class="text-2xl font-bold text-center mb-6">Tambah Kehadiran Siswa</h1>
+        <h1 class="text-2xl font-bold text-center mb-6">Tambah Penilaian Siswa</h1>
 
 
         <form>
             <div class="grid grid-cols-3 gap-6">
+                <!-- Nama Siswa -->
                 <div>
-                    <label class="block mb-2">Nama Siswa</label>
+                    <label for="nama_siswa" class="block mb-2">Nama Siswa</label>
                     <input id="nama_siswa" type="text" class="w-full p-2 border border-gray-300 rounded">
                 </div>
+        
+                <!-- Nama Sekolah -->
                 <div>
-                    <label class="block mb-2">Nama Sekolah</label>
+                    <label for="nama_sekolah" class="block mb-2">Nama Sekolah</label>
                     <input id="nama_sekolah" type="text" class="w-full p-2 border border-gray-300 rounded">
                 </div>
+        
+                <!-- Program Keahlian -->
                 <div>
-                    <label class="block mb-2">Program Keahlian</label>
+                    <label for="program_keahlian" class="block mb-2">Program Keahlian</label>
                     <input id="program_keahlian" type="text" class="w-full p-2 border border-gray-300 rounded">
                 </div>
+        
+                <!-- Nama Perusahaan -->
                 <div>
-                    <label class="block mb-2">Nama Perusahaan</label>
+                    <label for="nama_perusahaan" class="block mb-2">Nama Perusahaan</label>
                     <input id="nama_perusahaan" type="text" class="w-full p-2 border border-gray-300 rounded">
                 </div>
+        
+                <!-- Lama Praktik -->
                 <div>
-                    <label class="block mb-2">Lama Praktik</label>
+                    <label for="lama_praktik" class="block mb-2">Lama Praktik</label>
                     <input id="lama_praktik" type="text" class="w-full p-2 border border-gray-300 rounded">
                 </div>
+        
+                <!-- Microteaching -->
                 <div>
-                    <label class="block mb-2">Total Hadir</label>
-                    <input id="total_hadir" type="text" class="w-full p-2 border border-gray-300 rounded">
+                    <label for="microteaching" class="block mb-2">Microteaching</label>
+                    <select id="microteaching" class="w-full p-2 border border-gray-300 rounded">
+                        <option value="" disabled selected>Pilih</option>
+                        <option value="sangat_baik">Sangat Baik</option>
+                        <option value="baik">Baik</option>
+                        <option value="kurang_baik">Kurang Baik</option>
+                    </select>
                 </div>
+        
+                <!-- Sikap -->
                 <div>
-                    <label class="block mb-2">Total Tidak Hadir</label>
-                    <input id="total_tidak_hadir" type="text" class="w-full p-2 border border-gray-300 rounded">
+                    <label for="sikap" class="block mb-2">Sikap</label>
+                    <select id="sikap" class="w-full p-2 border border-gray-300 rounded">
+                        <option value="" disabled selected>Pilih</option>
+                        <option value="sangat_baik">Sangat Baik</option>
+                        <option value="baik">Baik</option>
+                        <option value="kurang_baik">Kurang Baik</option>
+                    </select>
                 </div>
+        
+                <!-- Kehadiran -->
                 <div>
-                    <label class="block mb-2">Total Izin</label>
-                    <input id="total_izin" type="text" class="w-full p-2 border border-gray-300 rounded">
+                    <label for="kehadiran" class="block mb-2">Kehadiran</label>
+                    <select id="kehadiran" class="w-full p-2 border border-gray-300 rounded">
+                        <option value="" disabled selected>Pilih</option>
+                        <option value="sangat_baik">Sangat Baik</option>
+                        <option value="baik">Baik</option>
+                        <option value="kurang_baik">Kurang Baik</option>
+                    </select>
                 </div>
+        
+                <!-- Project -->
                 <div>
-                    <label class="block mb-2">TTD Pembimbing Sekolah</label>
-                    <input type="file" class="w-full p-2 border border-gray-300 rounded">
-                </div>
-                <div>
-                    <label class="block mb-2">NIP Pembimbing Sekolah</label>
-                    <input id="nip_pembimbing_sekolah" type="text" class="w-full p-2 border border-gray-300 rounded">
-                </div>
-                <div>
-                    <label class="block mb-2">TTD Pembimbing Industri</label>
-                    <input type="file" class="w-full p-2 border border-gray-300 rounded">
-                </div>
-                <div>
-                    <label class="block mb-2">NIP Pembimbing IDUKA</label>
-                    <input id="nip_pembimbing_industri" type="text" class="w-full p-2 border border-gray-300 rounded">
+                    <label for="project" class="block mb-2">Project</label>
+                    <select id="project" class="w-full p-2 border border-gray-300 rounded">
+                        <option value="" disabled selected>Pilih</option>
+                        <option value="sangat_baik">Sangat Baik</option>
+                        <option value="baik">Baik</option>
+                        <option value="kurang_baik">Kurang Baik</option>
+                    </select>
                 </div>
             </div>
+        
+            <!-- Tombol Simpan -->
             <div class="mt-6 text-right">
                 <button type="button" id="saveButton" class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
             </div>
         </form>
         
-        <script>
+        
+        {{-- <script>
             document.getElementById('saveButton').addEventListener('click', function() {
                 // Ambil data dari form
                 const namaSiswa = document.getElementById('nama_siswa').value;
@@ -110,7 +138,7 @@
                     document.getElementById('total_izin').value = storedData.totalIzin;
                 }
             }
-        </script>
+        </script> --}}
         
 @endsection
 

@@ -14,7 +14,31 @@
         <p class="text-lg font-semibold mb-1">Selamat Datang di Website Absensi PKL</p>
         <div class="flex space-x-4">
             <a class="bg-blue-500 text-white px-4 py-2 rounded-lg" href="{{ route('jurnal-siswa.index') }}">Lihat Jurnal</a>
-            <button class="bg-green-500 text-white px-4 py-2 rounded-lg" id="ayo-absen">Ayo Absen</button>
+            @php
+                $today = \Carbon\Carbon::now()->toDateString();
+                $absenHariIni = \App\Models\Kehadiran::where('user_id', Auth::id())
+                    ->whereDate('tanggal', $today)
+                    ->first();
+                    
+                $buttonText = "Ayo Absen";
+                if ($absenHariIni) {
+                    if ($absenHariIni->foto_masuk && !$absenHariIni->foto_keluar) {
+                        $buttonText = "Ayo Pulang";
+                    } elseif ($absenHariIni->foto_masuk && $absenHariIni->foto_keluar) {
+                        $buttonText = "Selesai";
+                    }
+                }
+
+                // Hitung jumlah kehadiran
+                $jumlahKehadiran = \App\Models\Kehadiran::where('user_id', Auth::id())
+                    ->where('status', 'Hadir')
+                    ->count();
+            @endphp
+            <button class="bg-green-500 text-white px-4 py-2 rounded-lg {{ $buttonText === 'Selesai' ? 'opacity-50 cursor-not-allowed' : '' }}" 
+                    id="ayo-absen" 
+                    {{ $buttonText === 'Selesai' ? 'disabled' : '' }}>
+                {{ $buttonText }}
+            </button>
             <a class="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center gap-2" 
                 href="{{ asset('path/to/certificate.pdf') }}" 
                 download="Sertifikat_PKL_{{ Auth::user()->name }}">
@@ -41,7 +65,7 @@
         <!-- Jumlah Absen -->
         <div class="bg-white p-6 rounded-lg shadow">
             <h2 class="text-lg font-semibold">Jumlah Absen yang Telah Dilakukan</h2>
-            <p class="text-3xl font-bold mt-4" id="jumlah-absen">0</p>
+            <p class="text-3xl font-bold mt-4" id="jumlah-absen">{{ $jumlahKehadiran }}</p>
         </div>
     </div>
 </div>
@@ -57,8 +81,7 @@
         <!-- Tempat Menampilkan Gambar Setelah Foto diambil -->
         <img id="captured-image" class="hidden mt-4 w-full h-auto bg-gray-200 rounded-lg" />
         <div class="flex justify-center mt-4">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2" id="captureButton">Ambil Foto</button>
-            <button class="bg-green-500 text-white px-4 py-2 rounded-lg hidden" id="doneButton">Selesai</button>
+            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2" id="captureButton">Mulai Foto</button>
         </div>
     </div>
 </div>
@@ -80,136 +103,173 @@
     // Mendapatkan elemen modal dan tombol
     const cameraModal = document.getElementById("cameraModal");
     const captureButton = document.getElementById("captureButton");
-    const doneButton = document.getElementById("doneButton");
     const videoElement = document.getElementById("video");
     const capturedImage = document.getElementById("captured-image");
     const closeButton = document.getElementById("closeButton");
 
-   // Fungsi untuk membuka kamera
-async function startCamera() {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    videoElement.srcObject = stream;
-}
-
-// Fungsi untuk mengambil foto dan mengirim ke server
-async function capturePhoto() {
-    const canvas = document.createElement("canvas");
-    canvas.width = videoElement.videoWidth;
-    canvas.height = videoElement.videoHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-
-    // Ambil data gambar dalam format Base64
-    const dataUrl = canvas.toDataURL("image/png");
-
-    try {
-        // Kirim data ke server
-        const response = await fetch("{{ route('kehadiran.store') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            },
-            body: JSON.stringify({
-                photo: dataUrl, // Kirim data foto dalam format Base64
-            }),
-        });
-
-        const result = await response.json();
-        if (result.message === "Kehadiran berhasil disimpan") {
-            alert("Absensi berhasil dicatat!");
-            updateAttendance(); // Update jumlah absen
-        } else {
-            alert("Terjadi kesalahan, coba lagi.");
+    // Fungsi untuk membuka kamera
+    async function startCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            videoElement.srcObject = stream;
+        } catch (error) {
+            console.error("Error accessing camera:", error);
+            alert("Gagal mengakses kamera. Pastikan kamera tersedia dan izin diberikan.");
         }
-    } catch (error) {
-        console.error("Error:", error);
-        alert("Gagal mengirim data ke server.");
     }
-}
 
-// Menangani klik tombol Ambil Foto
-captureButton.addEventListener("click", capturePhoto);
+    // Fungsi untuk mengambil foto dan mengirim ke server
+    async function capturePhoto() {
+        if (captureButton.textContent === "Mulai Foto") {
+            // Mulai mengambil foto
+            const canvas = document.createElement("canvas");
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            
+            // Tampilkan gambar yang diambil
+            capturedImage.src = canvas.toDataURL('image/jpeg');
+            capturedImage.classList.remove("hidden");
+            videoElement.classList.add("hidden");
+            
+            // Ubah teks tombol
+            captureButton.textContent = "Selesai";
+            captureButton.classList.remove("bg-blue-500");
+            captureButton.classList.add("bg-green-500");
+            
+        } else {
+            // Proses selesai dan kirim ke server
+            const canvas = document.createElement("canvas");
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
-// Fungsi untuk menonaktifkan tombol setelah absen
-function disableButton() {
-    const absensiButton = document.getElementById("ayo-absen");
-    absensiButton.disabled = true;  // Nonaktifkan tombol
-    absensiButton.classList.add("cursor-not-allowed");  // Menambahkan kelas agar terlihat tidak aktif
-    absensiButton.classList.add("opacity-50");  // Mengurangi opacity tombol untuk menunjukkan bahwa tombol tidak aktif
-}
+            canvas.toBlob(async (blob) => {
+                const formData = new FormData();
+                formData.append('foto_absen', blob, 'foto_absen.jpg');
+                
+                const absenButton = document.getElementById("ayo-absen");
+                const jenisAbsen = absenButton.textContent === "Ayo Absen" ? "masuk" : "pulang";
+                formData.append('jenis_absen', jenisAbsen);
 
-// Fungsi untuk mengganti teks dan ID tombol
-function toggleButton() {
-    const absensiButton = document.getElementById("ayo-absen");
-    if (absensiButton.textContent === "Ayo Absen") {
-        absensiButton.textContent = "Ayo Pulang";
-        absensiButton.setAttribute("id", "ayo-pulang"); // Ubah ID tombol
-    } else {
-        absensiButton.textContent = "Ayo Absen";
-        absensiButton.setAttribute("id", "ayo-absen"); // Kembalikan ID tombol
+                try {
+                    const response = await fetch("{{ route('kehadiran.store') }}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        },
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    if (result.message === "Data kehadiran berhasil disimpan") {
+                        alert("Absensi berhasil dicatat!");
+                        
+                        // Update jumlah kehadiran dari response server
+                        document.getElementById("jumlah-absen").textContent = result.jumlah_kehadiran;
+                        
+                        if (jenisAbsen === "pulang") {
+                            const absensiButton = document.getElementById("ayo-absen");
+                            absensiButton.textContent = "Selesai";
+                            absensiButton.disabled = true;
+                            absensiButton.classList.add("cursor-not-allowed", "opacity-50");
+                            absensiButton.style.backgroundColor = "#ccc";
+                        } else {
+                            const absensiButton = document.getElementById("ayo-absen");
+                            absensiButton.textContent = "Ayo Pulang";
+                        }
+                        
+                        // Tutup modal dan reset kamera
+                        cameraModal.classList.add("hidden");
+                        
+                        if (videoElement.srcObject) {
+                            videoElement.srcObject.getTracks().forEach(track => track.stop());
+                        }
+                        
+                        // Reset tampilan untuk penggunaan berikutnya
+                        captureButton.textContent = "Mulai Foto";
+                        captureButton.classList.remove("bg-green-500");
+                        captureButton.classList.add("bg-blue-500");
+                        videoElement.classList.remove("hidden");
+                        capturedImage.classList.add("hidden");
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Gagal mengirim data: " + error.message);
+                }
+            }, 'image/jpeg', 0.8);
+        }
     }
-    disableButton(); // Menonaktifkan tombol setelah klik
-}
 
-// Menangani klik tombol Selesai
-doneButton.addEventListener("click", () => {
-    cameraModal.classList.add("hidden");
-    updateAttendance();  // Mengupdate jumlah absen
-    toggleButton(); // Ganti tombol "Ayo Absen" menjadi "Ayo Pulang" dan menonaktifkan tombol
-});
+    // Menangani klik tombol Ambil Foto
+    captureButton.addEventListener("click", capturePhoto);
 
-// Menangani klik tombol Tutup
-closeButton.addEventListener("click", () => {
-    cameraModal.classList.add("hidden");
-});
-
-// Menangani klik untuk membuka modal kamera
-document.getElementById("ayo-absen").addEventListener("click", () => {
-    // Reset gambar dan video saat membuka modal absen
-    capturedImage.classList.add("hidden");
-    capturedImage.src = "";
-    videoElement.classList.remove("hidden");
-    captureButton.classList.remove("hidden");
-    doneButton.classList.add("hidden");
-
-    // Buka modal kamera
-    cameraModal.classList.remove("hidden");
-});
-
-// Memulai kamera saat halaman dimuat
-window.addEventListener("DOMContentLoaded", startCamera);
-
-// Fungsi untuk mengupdate jumlah absen
-function updateAttendance() {
-    const attendanceCountElement = document.getElementById("jumlah-absen");
-    let currentCount = parseInt(attendanceCountElement.textContent);
-    attendanceCountElement.textContent = currentCount + 1;
-}
-
-// Fungsi untuk membuka modal
-function openModal(absensiId) {
-    // Menampilkan modal sesuai ID
-    document.getElementById('modal-' + absensiId).classList.remove('hidden');
-}
-
-// Fungsi untuk menutup modal
-function closeModal(absensiId) {
-    // Menyembunyikan modal sesuai ID
-    document.getElementById('modal-' + absensiId).classList.add('hidden');
-}
-
-// Fungsi untuk menampilkan gambar absen (Masuk/Pulang)
-function showImage(type, absensiId) {
-    if (type === 'checkIn') {
-        document.getElementById('checkInImage-' + absensiId).classList.remove('hidden');
-        document.getElementById('checkOutImage-' + absensiId).classList.add('hidden');
-    } else if (type === 'checkOut') {
-        document.getElementById('checkOutImage-' + absensiId).classList.remove('hidden');
-        document.getElementById('checkInImage-' + absensiId).classList.add('hidden');
+    // Fungsi untuk menonaktifkan tombol setelah absen
+    function disableButton() {
+        const absensiButton = document.getElementById("ayo-absen");
+        absensiButton.disabled = true;
+        absensiButton.classList.add("cursor-not-allowed");
+        absensiButton.classList.add("opacity-50");
     }
-}
 
+    // Menangani klik tombol Tutup
+    closeButton.addEventListener("click", () => {
+        cameraModal.classList.add("hidden");
+        if (videoElement.srcObject) {
+            videoElement.srcObject.getTracks().forEach(track => track.stop());
+        }
+        // Reset tampilan untuk penggunaan berikutnya
+        captureButton.textContent = "Mulai Foto";
+        captureButton.classList.remove("bg-green-500");
+        captureButton.classList.add("bg-blue-500");
+        videoElement.classList.remove("hidden");
+        capturedImage.classList.add("hidden");
+    });
+
+    // Menangani klik untuk membuka modal kamera
+    document.getElementById("ayo-absen").addEventListener("click", () => {
+        capturedImage.classList.add("hidden");
+        capturedImage.src = "";
+        videoElement.classList.remove("hidden");
+        captureButton.textContent = "Mulai Foto";
+        captureButton.classList.remove("bg-green-500");
+        captureButton.classList.add("bg-blue-500");
+
+        cameraModal.classList.remove("hidden");
+        startCamera();
+    });
+
+    // Memulai kamera saat halaman dimuat
+    window.addEventListener("DOMContentLoaded", () => {
+        checkAbsensiStatus();
+    });
+
+    // Fungsi untuk membuka modal
+    function openModal(absensiId) {
+        document.getElementById('modal-' + absensiId).classList.remove('hidden');
+    }
+
+    // Fungsi untuk menutup modal
+    function closeModal(absensiId) {
+        document.getElementById('modal-' + absensiId).classList.add('hidden');
+    }
+
+    // Fungsi untuk menampilkan gambar absen (Masuk/Pulang)
+    function showImage(type, absensiId) {
+        if (type === 'checkIn') {
+            document.getElementById('checkInImage-' + absensiId).classList.remove('hidden');
+            document.getElementById('checkOutImage-' + absensiId).classList.add('hidden');
+        } else if (type === 'checkOut') {
+            document.getElementById('checkOutImage-' + absensiId).classList.remove('hidden');
+            document.getElementById('checkInImage-' + absensiId).classList.add('hidden');
+        }
+    }
 
 </script>
 

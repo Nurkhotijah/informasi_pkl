@@ -59,7 +59,7 @@
                 <tr>
                     <td class="border border-black p-1 md:p-2 text-center">4</td>
                     <td class="border border-black p-1 md:p-2">Nilai Kehadiran</td>
-                    <td class="border border-black p-1 md:p-2">________ Hari</td>
+                    <td class="border border-black p-1 md:p-2">________ </td>
                 </tr>
                 <tr>
                     <td class="border border-black p-1 md:p-2 text-center"></td>
@@ -69,19 +69,7 @@
             </tbody>
         </table>
 
-        <div class="mb-4">
-            <div class="flex flex-wrap justify-between mb-2">
-                <span class="w-1/2 sm:w-auto">Dibuat tanggal</span>
-                <span class="w-1/2 sm:w-auto text-right">: .......................... 20....</span>
-            </div>
-        </div>
-
-        <!-- Bagian Tanpa Tanda Tangan -->
-        <div class="text-center mt-8">
-            <p><strong>Penilaian ini diterima oleh:</strong></p>
-            <p>Pembimbing Industri dan Dunia Kerja (IDUKA)</p>
-            <p>Pembimbing Sekolah (1)</p>
-        </div>
+        
     </div>
 </main>
 
